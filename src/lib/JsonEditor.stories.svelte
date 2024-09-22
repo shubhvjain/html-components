@@ -14,8 +14,48 @@
   function handleClick() {
     count += 1;
   }
+
+  let data = {
+    "name":"John Doe",
+    "city":"Erlangen",
+    "country":"Germany",
+    "age":100,
+    "is_alien":true
+  }
+
+  let schema = {
+    title:"Living being",
+    properties : {
+      "name":{
+        "type":"string"
+      },
+      "city":{
+        "type":"string"
+      },
+      "country":{
+        "type":"string"
+      },
+      "age":{
+        type:"number"
+      },
+      "is_alien":{
+        type:"boolean"
+      }
+    
+    }
+  }
+
 </script>
 
-<Story name="blank">
-  <JsonEditor></JsonEditor>
+<Story name="Schema missing">
+  <JsonEditor data={data}></JsonEditor>
+</Story>
+
+<Story name="Data missing">
+  Shows a blank form based on the schema : 
+  <JsonEditor schema={schema}></JsonEditor>
+</Story>
+
+<Story name="Simple 1">
+  <JsonEditor data={data} schema={schema}></JsonEditor>
 </Story>
