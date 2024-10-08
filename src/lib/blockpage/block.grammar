@@ -1,0 +1,55 @@
+@top Document {
+  (Block)+
+}
+
+Block {
+  Declaration? Line* BlankLine
+}
+
+Line {
+    Annotation | ContentLine
+}
+
+BlankLine{
+  "\n""\n"
+}
+
+Declaration {
+  "." "[" Name "]" Title "\n"
+}
+
+
+Annotation {
+  (Invocation | Append | Edge) "\n"
+}
+
+Invocation {
+  ">" "[" Name "]"
+}
+
+Append {
+  "+" "[" Name "]" 
+}
+
+Edge {
+  "~" "[" Label "," Name "]"
+}
+
+ContentLine {
+  _text_"\n"
+}
+
+Name {_alpha_}
+
+Title {
+  _text_+
+}
+
+Label {
+  _text_+
+}
+
+@tokens {
+  _text_ { ![\n.+><~,\r]+ }
+  _alpha_ {(std.asciiLetter|"_"|std.digit)+}
+}

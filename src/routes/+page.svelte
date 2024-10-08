@@ -5,7 +5,7 @@
 
 <script>
   import JsonEditor from "../lib/JsonEditor.svelte";
-
+  import Page from "$lib/blockpage/Page.svelte";
   let components = [
     {
       name:"JsonEditor",
@@ -18,4 +18,5 @@
 
 <h2> JSON Editor setup </h2>
 
-<JsonEditor></JsonEditor>
+<!-- <JsonEditor></JsonEditor> -->
+ <Page></Page>

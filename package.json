@@ -8,7 +8,8 @@
     "package": "svelte-kit sync && svelte-package && publint",
     "prepublishOnly": "npm run package",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "generate-parser": "npx lezer-generator src/lib/blockpage/block.grammar -o src/lib/blockpage/parser.js --export"
   },
   "exports": {
     ".": {
@@ -48,11 +49,15 @@
   "types": "./dist/index.d.ts",
   "type": "module",
   "dependencies": {
-    "@codemirror/lang-javascript": "^6.2.2",
-    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/highlight": "^0.19.8",
+    "@codemirror/language": "^6.10.3",
     "@codemirror/state": "^6.4.1",
-    "@codemirror/view": "^6.33.0",
+    "@codemirror/view": "^6.34.1",
     "@json-editor/json-editor": "^2.15.1",
+    "@lezer/generator": "^1.7.1",
+    "@lezer/highlight": "^1.2.1",
+    "@lezer/lr": "^1.4.2",
+    "beanbagdb": "^0.5.51",
     "bootstrap": "^5.3.3",
     "codemirror": "^6.0.1"
   }
