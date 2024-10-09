@@ -1,55 +1,26 @@
-@top Document {
-  (Block)+
-}
-
-Block {
-  Declaration? Line* BlankLine
-}
-
-Line {
-    Annotation | ContentLine
-}
-
-BlankLine{
-  "\n""\n"
-}
-
-Declaration {
-  "." "[" Name "]" Title "\n"
-}
-
-
-Annotation {
-  (Invocation | Append | Edge) "\n"
-}
-
-Invocation {
-  ">" "[" Name "]"
-}
-
-Append {
-  "+" "[" Name "]" 
-}
-
-Edge {
-  "~" "[" Label "," Name "]"
-}
-
-ContentLine {
-  _text_"\n"
-}
-
+@top Document {(Block)+}
+Block {Declaration? Line* BlankLine}
+Line {Annotation | Text}
+BlankLine{"\n\n"}
+Declaration {NameBracket Title "\n"}
+NameBracket {".[" Name "]"}
 Name {_alpha_}
-
-Title {
-  _text_+
-}
-
-Label {
-  _text_+
-}
-
+Title { _title_text_+}
+Annotation {(Invocation | Append | Edge | DictLine|Comment) "\n"}
+Invocation {">[" InputBlockName "]"}
+InputBlockName{_alpha_}
+Append {"+[" InputBlockName "]" }
+Edge {"~[" Label "," InputBlockName "]"}
+Label { _text_+}
+DictLine{("- " Key ":" Value)}
+Key {_dict_key_}
+Value {_dict_value_}
+Comment{"/["_text_"]"}
+Text {_text_"\n"}
 @tokens {
-  _text_ { ![\n.+><~,\r]+ }
-  _alpha_ {(std.asciiLetter|"_"|std.digit)+}
+  _text_ { ![\n.+><~,\-\/r]![\n.+><~,\-\/r]![\n\r]* }
+  _alpha_ {(std.asciiLetter|"_"|"-"|std.digit)+}
+  _title_text_ { ![\n.+><~\r]+ } 
+  _dict_key_ {(std.asciiLetter|"_"|std.digit)+}
+  _dict_value_ {![\n.+><~,\-\/r]+}
 }

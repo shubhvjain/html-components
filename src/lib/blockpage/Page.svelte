@@ -5,35 +5,37 @@
   };
   let blocks = [
     {
-      content:
-        "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      view: null,
-      isValid: true,
+        view: null,
+        editor : {
+          content:".[block1] This is the title of the block\nMore content comes here.This is great. This is just a single line.Next line will have an annotation\n>[block21]\n~[label,block12]\nSome more text will come here\n- This is a line\n- This is yet another line\n- key : Value\n/[This is a comment]",
+          isValid: true,
+          //options:{}
+        }
     },
-    {
-      content:
-        "Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-      view: null,
-      isValid: true,
-    },
-    {
-      content:
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      view: null,
-      isValid: true,
-    },
-    {
-      content:
-        "Excepteur sint occaecat cupidatat non proident,\nsunt in culpa qui officia deserunt mollit anim id est laborum.",
-      view: null,
-      isValid: true,
-    },
-    {
-      content:
-        "Curabitur pretium tincidunt lacus.\nNulla gravida orci a odio.\nNullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis.",
-      view: null,
-      isValid: true,
-    },
+    // {
+    //   content:
+    //     "Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    //   view: null,
+    //   isValid: true,
+    // },
+    // {
+    //   content:
+    //     "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    //   view: null,
+    //   isValid: true,
+    // },
+    // {
+    //   content:
+    //     "Excepteur sint occaecat cupidatat non proident,\nsunt in culpa qui officia deserunt mollit anim id est laborum.",
+    //   view: null,
+    //   isValid: true,
+    // },
+    // {
+    //   content:
+    //     "Curabitur pretium tincidunt lacus.\nNulla gravida orci a odio.\nNullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis.",
+    //   view: null,
+    //   isValid: true,
+    // },
   ];
 
   function bindEditorView(view, index) {
@@ -137,13 +139,50 @@
   }
 </script>
 
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
 {#each blocks as block, index}
   <Block
-    id={"block-" + index}
-    {options}
-    content={block.content}
+    Id={"block-" + index}
+    Options={options}
+    Content={block.editor.content}
     onKeyDown={(e) => handleKeyDown(e, index)}
-    bindView={(view) => bindEditorView(view, index)}
+    BindView={(view) => bindEditorView(view, index)}
     onContentChange={(newContent, isValid) =>
       handleContentChange(newContent, isValid, index)}
   />
@@ -158,7 +197,7 @@
   {/if}
 {/each}
 
-<table class="table">
+<!-- <table class="table">
   <thead>
     <tr>
       <th> Index </th>
@@ -181,7 +220,7 @@
       </tr>
     {/each}
   </tbody>
-</table>
+</table> -->
 
 <style>
   .block {
