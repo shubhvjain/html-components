@@ -1,80 +1,91 @@
 <script>
-  import { onMount } from 'svelte';
-
-  export let key = ''; // The title of the document passed as a prop
-  export let tags = [];
-
-
-  const help_docs = {
-    "list":{
-      title : "List of all help topics",
-      tags:[],
-      doc:``
+  // import { onMount } from "svelte";
+  export let key = ""; // The title of the document passed as a prop
+  let command_list = [
+    {
+      command: `help/"topic"`,
+      task: `To view a help topic. "list" will show the list of all topics available `,
     },
-    "search":{
-      title : "Search commands for workspace",
-      tags : [],
-      doc : `The search box in the workspace can be used to load records from the database in many ways. This page shows the list of all commands and how to use them. `
-    }
+  ];
 
+  let help_docs_list = {
+    "list":"View the list of all help docs available (opens this page) ",
+    "search":"Describes how the search box works and a list of commands that can be used"
   }
 
-
-  let doc = {title:"",doc:"",tags:[]};
   let docFound = false;
-
   // Function to fetch the doc content based on the title
   function loadDoc(doc_key) {
-    if(help_docs[doc_key]){
-      docFound = true
-      doc = help_docs[doc_key]
-    }else{
-      docFound = false
+    if (help_docs_list[doc_key]) {
+      docFound = true;
+    } else {
+      docFound = false;
     }
   }
 
-  // Load the document when the component is mounted
-  onMount(() => {
+  $: if (key) {
     loadDoc(key);
-  });
-
-  $: if (key){
-    loadDoc(key)
   }
-  
 </script>
 
 <!-- Template: Render the document or a "not found" message -->
 <div class="container mt-4">
   {#if docFound}
-  
-    <div class="card1">
-     
-      <div class="card-body1">
-        <h3>{doc.title}</h3>
-        {@html doc.doc} <!-- Render the HTML content safely -->
-
-        {#if key == "list" }
-        <ul>
-          {#each Object.keys(help_docs) as page}          
+    {#if key == "list"}
+      <h3>List of help pages</h3>
+      <ul>
+        {#each Object.keys(help_docs_list) as page}
           <li>
-             <button type="button" class="btn btn-link" on:click={()=>{key=page}}>{page}</button>  : {help_docs[page]['title']}
+            <button
+              type="button"
+              class="btn btn-link"
+              on:click={() => {
+                key = page;
+              }}>{page}</button
+            >
+            : {help_docs_list[page]}
           </li>
-          {/each} 
-        </ul>
-        {/if}
-        {#if key != "list" }
-        <br><br>
-         <button type="button" class="btn btn-link" on:click={()=>{key="list"}}>Help home</button>
-        {/if}
-
-
-
-      </div>
-    </div>
+        {/each}
+      </ul>
+    {:else if (key = "search")}
+      <p>
+        The search box in the workspace can be used to load records from the
+        database in many ways. This page shows the list of all commands and how
+        to use them.
+      </p>
+      <p>
+        <b>Format of commands</b>: Each command has a main key word which is
+        then separated by a "/"
+      </p>
+      <ul>
+        {#each command_list as item}
+          <li><code>${item.command}</code> : ${item.task}</li>
+        {/each}
+      </ul>
+    {/if}
+    {#if key != "list"}
+      <br /><br />
+      <button
+        type="button"
+        class="btn btn-link"
+        on:click={() => {
+          key = "list";
+        }}>Help home</button
+      >
+    {/if}
   {:else}
-  <div class="alert alert-danger" role="alert">
-    Document not found!
-  </div>
+    <div class="alert alert-danger" role="alert">
+      Document not found!
+      {#if key != "list"}
+        <br /><br />
+        <button
+          type="button"
+          class="btn btn-link"
+          on:click={() => {
+            key = "list";
+          }}>Help home</button
+        >
+      {/if}
+    </div>
   {/if}
 </div>
