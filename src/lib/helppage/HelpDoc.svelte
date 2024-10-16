@@ -6,6 +6,15 @@
       command: `help/"topic"`,
       task: `To view a help topic. "list" will show the list of all topics available `,
     },
+    {
+      command: `find/"search criteria"`,
+      task: `To view a help topic. "list" will show the list of all topics available `,
+    },
+    {
+      command:`open/"identifier"/"id"`,
+      task:`This command will open (if not already) the given record. The record identified can be  'id' or 'link' followed by the respective value`
+    }
+
   ];
 
   let help_docs_list = {
@@ -48,6 +57,7 @@
         {/each}
       </ul>
     {:else if (key = "search")}
+    <h3>Search box commands</h3>
       <p>
         The search box in the workspace can be used to load records from the
         database in many ways. This page shows the list of all commands and how
@@ -59,7 +69,7 @@
       </p>
       <ul>
         {#each command_list as item}
-          <li><code>${item.command}</code> : ${item.task}</li>
+          <li><code>{item.command}</code> : {item.task}</li>
         {/each}
       </ul>
     {/if}

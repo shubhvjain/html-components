@@ -3,8 +3,8 @@
   import { writable } from 'svelte/store';
   export let query = {}; // Query provided by the parent in JSON format
   export let docs = []; // Document data passed from the parent component
-  
-  
+  // openLink
+
   //*** this part is for record selection *//
 
   let selectionType = "no"; // default selection type
@@ -29,6 +29,10 @@
       dispatch('selectedRecords', selectedDocs); // dispatch selected documents to parent
     }
     console.log(selectedDocs)
+  }
+
+  function openPageLink(link){
+    dispatch("openLink",`open/link/${link}`)
   }
   
   $: selectedCount = selectionType === "multiple" ? selectedDocs.length : (selectedDoc ? 1 : 0);
@@ -184,7 +188,9 @@
   </select>
 </div> -->
 
-{#if isLoading}
+<div>
+
+  {#if isLoading}
   <p>Searching...</p>
 {:else}
   <div>
@@ -223,7 +229,16 @@
           <tr>
             
             {#each $allFields as field, index}
-              {#if $toggledFields[field]} <td>{ getFieldValue(doc,field)}</td> {/if}
+              {#if $toggledFields[field]} <td>
+                {#if field=="meta.link"}
+                  <button type="button" class="btn btn-link" on:click={openPageLink(doc.meta.link)}>{getFieldValue(doc,field)}</button>
+                {:else}
+                  {getFieldValue(doc,field)}
+                {/if}
+
+
+                </td> 
+              {/if}
             {/each}
 
             <td>
@@ -251,6 +266,8 @@
   </div>
 {/if}
 
+</div>
+
 
 
 <style>
@@ -270,4 +287,26 @@
   .field-checkbox input {
     margin-right: 5px;
   }
+
+details {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 0.5em 0.5em 0;
+}
+
+summary {
+  font-weight: bold;
+  margin: -0.5em -0.5em 0;
+  padding: 0.5em;
+}
+
+details[open] {
+  padding: 0.5em;
+}
+
+details[open] summary {
+  border-bottom: 1px solid #aaa;
+  margin-bottom: 0.5em;
+}
+
 </style>
