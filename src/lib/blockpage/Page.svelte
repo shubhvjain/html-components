@@ -5,11 +5,12 @@
   };
   let blocks = [
     {
-        view: null,
+        view: null,        
         editor : {
-          content:".[block1] This is the title of the block\nMore content comes here.This is great. This is just a single line.Next line will have an annotation\n>[block21]\n~[label,block12]\nSome more text will come here\n- This is a line\n- This is yet another line\n- key : Value\n/[This is a comment]",
+          text:".[block1] This is the title of the block\nMore content comes here.This is great. This is just a single line.Next line will have an annotation\n>[block21]\n~[label,block12]\nSome more text will come here\n- This is a line\n- This is yet another line\n- key : Value\n/[This is a comment]",
           isValid: true,
-          //options:{}
+          showEditor:true,
+          showPreview:false
         }
     },
     // {
@@ -42,10 +43,10 @@
     blocks[index].view = view; // Store the view in the blocks array
   }
 
-  function handleContentChange(newContent, isValid, index) {
+  function handleContentChange(newContent, index) {
     // Update the blocks array with the new content and validity status
-    blocks[index].content = newContent;
-    blocks[index].isValid = isValid;
+    blocks[index].editor = newContent;
+    
   }
 
   function handleKeyDown(event, index) {
@@ -101,7 +102,16 @@
   function addNewBlock(index) {
     // Add a new block to the blocks array
     blocks.splice(index + 1, 0, {
-      content: `Title\nSub title\nSome text${index}`,
+      editor:{text: `Title\nSub title\nSome text${index}`},
+      view: null,
+    });
+    blocks = blocks;
+  }
+  
+  function addNewBlockEnd() {
+    // Add a new block to the blocks array
+    blocks.push({
+      editor:{text: `Title\nSub title\nSome text`},
       view: null,
     });
     blocks = blocks;
@@ -139,40 +149,14 @@
   }
 </script>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-        </li>
-      </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+    <div class="p-2 flex-grow-1">
+      <span class="navbar-brand mb-0" contenteditable="true">Document title</span>
     </div>
+    
+    <div class="p-2">Buttons here</div>
+
   </div>
 </nav>
 
@@ -180,14 +164,15 @@
   <Block
     Id={"block-" + index}
     Options={options}
-    Content={block.editor.content}
+    Content={block.editor}
     onKeyDown={(e) => handleKeyDown(e, index)}
     BindView={(view) => bindEditorView(view, index)}
-    onContentChange={(newContent, isValid) =>
-      handleContentChange(newContent, isValid, index)}
+    onContentChange={(newContent) =>
+      handleContentChange(newContent, index)}
   />
   {#if options.showAddButtonAfterEachBlock}
     <button
+      class="btn btn-sm"
       id={`add-button-${index}`}
       on:keydown={(e) => handleButtonKeyDown(e, index)}
       on:click={() => addNewBlock(index)}
@@ -196,6 +181,9 @@
     </button>
   {/if}
 {/each}
+<br>
+
+<button class="btn btn-sm" on:click={() => addNewBlockEnd()}>Add Block</button>
 
 <!-- <table class="table">
   <thead>

@@ -23,11 +23,12 @@
    * The initial content of the editor. If not provided, a random block ID is generated.
    * @type {string}
    */
-  export let Content = "";
+  export let Content = {};
   export let BindView;
 
   export let onKeyDown = () => {};
   export let onContentChange = () => {};
+  export let OnImagePasted = ()=>{};
 
   // loading the block
   let BlockLoaded = false;
@@ -35,10 +36,20 @@
   // Loading the editor
   let Editor;
   let View;
-  let ContentValid = true; // Flag for content validity
   let TextErrors = []; // Errors in the content
 
   let OptionDivVisible = false;
+
+  const getWorkingObj = (saved,defaults)=>{
+    const working = { ...saved }; // Start with saved values
+    // Loop through defaults and add only keys that are missing in saved
+    for (let key in defaults) {
+      if (!(key in saved)) {
+        working[key] = defaults[key];
+      }
+    }
+    return {...working}
+  }
 
   const loadBlock = () => {
     BlockLoaded = false;
@@ -52,15 +63,21 @@
     let default_options = {
       addRandomIdInNewBlock: true,
     };
+    Options = getWorkingObj(Options,default_options) 
 
-    // load default values of option
-    Options = { ...Options, ...default_options };
+    if(typeof(Content)!="object"){
+      error.push("Content should be an object with text field")
+    }else{
+      const default_content = {text:"",showEditor:true,showPreview:false,isValid:true,textError:""}
+      Content = getWorkingObj(Content,default_content) 
 
-    if (!Content) {
-      let randomId = `.[${Math.round(Math.random() * 100)}]`;
-      Content = `${Options.addRandomIdInNewBlock ? randomId : ".[ ] "}`;
+      if (!Content.text) {
+        let randomId = `.[${Math.round(Math.random() * 100)}] `;
+        Content.text = `${Options.addRandomIdInNewBlock ? randomId : ".[ ]"}`;
+      }
+      
     }
-
+    
     if (!BindView) {
       error.push("The required input 'bindview' is not provided");
     }
@@ -72,50 +89,16 @@
     }
   };
 
-  const loadEditor = () => {
-    
-  };
-
-  
-
-
-
-  function validateContent(text) {
-    let errors = [];
-    const hasDoubleNewlines = text.includes("\n\n");
-    if (hasDoubleNewlines) {
-      errors.push("A block cannot have a blank line");
-    }
-    const isNotEmpty = text.trim() !== "";
-    let validity = isNotEmpty && !hasDoubleNewlines;
-    return { validity, errors }; // Valid if not empty and no double newlines
-  }
-
-  function checkValidity() {
-    let v = validateContent(Content);
-    ContentValid = v.validity;
-    TextErrors = v.errors;
-    onContentChange(Content, ContentValid);
-  }
-
-  onMount(() => {
-    loadBlock();
+  const loadEditor = ()=>{
     if (BlockLoaded) {
       // Create the editor view only after the DOM element is mounted
       setTimeout(() => {
         if (Editor) {
           View = new EditorView({
             state: EditorState.create({
-              doc: Content,
+              doc: Content.text,
               extensions: [
-                keymap.of([
-                  indentWithTab,
-                  ...defaultKeymap,
-                  ...searchKeymap,
-                  ...historyKeymap,
-                  ...closeBracketsKeymap,
-                  ...foldKeymap,
-                ]),
+                keymap.of([indentWithTab,...defaultKeymap,...searchKeymap,...historyKeymap,...closeBracketsKeymap,...foldKeymap]),
                 loadBlockSyntax(),
                 syntaxHighlighting(myHighlightStyle),
                 search(),
@@ -128,7 +111,7 @@
                 EditorView.lineWrapping,
                 EditorView.updateListener.of((update) => {
                   if (update.changes) {
-                    Content = update.state.doc.toString();
+                    Content.text = update.state.doc.toString();
                   }
                 })
               ]
@@ -137,6 +120,7 @@
           });
           BindView(View);
           Editor.addEventListener("focusout", checkValidity);
+          checkValidity()
         } else {
           console.log("Editor DOM element not found yet.");
         }
@@ -144,32 +128,82 @@
     } else {
       console.log("Editor cannot be loaded since the component was not loaded successfully");
     }
+  }
+
+  
+  function validateContent(text) {
+    let errors = [];
+    const hasDoubleNewlines = text.includes("\n\n");
+    if (hasDoubleNewlines) {
+      errors.push("A block cannot have a blank line");
+    }
+    const isNotEmpty = text.trim() !== "";
+    let validity = isNotEmpty && !hasDoubleNewlines;
+    return { validity, errors }; // Valid if not empty and no double newlines
+  }
+
+  function checkValidity() {
+    let v = validateContent(Content.text);
+    Content.isValid = v.validity;
+    Content.textError = v.errors.join(",");
+    onContentChange(Content);
+  }
+
+  onMount(() => {
+    loadBlock()
+    if(Content.showEditor==true){loadEditor()}
+    
   });
 
+  function isDivBlank(div) {
+    // Check if the provided div is valid and exists
+    if (div && div instanceof HTMLElement) {
+      // Check if the div's text content is empty or contains only whitespace
+      return div.textContent.trim() === ""; 
+    }
+    return true; // Return true if the div is invalid
+  }
+
   $: {
-    if (View && Content !== View.state.doc.toString()) {
+    if (View && Content.text !== View.state.doc.toString()) {
       View.dispatch({
-        changes: { from: 0, to: View.state.doc.length, insert: Content },
+        changes: { from: 0, to: View.state.doc.length, insert: Content.text },
       });
     }
+    //console.log(checkIfDivIsBlank())
+    // if(Content.showEditor==true&&isDivBlank("editor_space")==true){
+    //   loadEditor()
+    // }
   }
+
+  
 </script>
 
 {#if BlockLoaded == true}
   <div>
     <div class="d-flex">
       <div class="p-2 flex-grow-1">
-        <div
-          bind:this={Editor}
-          id={Id}
-          class:error={!ContentValid}
-          tabindex="0"
-          on:keydown={onKeyDown}
-          spellcheck="true"
-        ></div>
-        {#if !ContentValid}
-          <small class="text-danger" role="alert">{TextErrors.join(",")}</small>
+        <div id="editor_space">
+
+          {#if Content.showEditor}
+            <div
+            bind:this={Editor}
+            id={Id}
+            class:error={!Content.isValid}
+            tabindex="0"
+            on:keydown={onKeyDown}
+            spellcheck="true"
+          ></div>
+          {#if !Content.isValid}
+            <small class="text-danger" role="alert">{Content.textError}</small>
+          {/if}
         {/if}
+        
+        </div>
+        <div id="preview_space">
+          
+        </div>
+       
       </div>
       <div class="p-2">
         <div>
@@ -194,17 +228,30 @@
           </button>
         </div>
         <div style="display: {OptionDivVisible ? 'block' : 'none'};">
-          <ul class="list-group">
-            <li class="list-group-item">An item</li>
-            <li class="list-group-item">A second item</li>
-            <li class="list-group-item">A third item</li>
-            <li class="list-group-item">A fourth item</li>
-            <li class="list-group-item">And a fifth one</li>
+
+          <ul class="list-group" style="font-size: small;">
+            <li class="list-group-item">
+              <input  bind:checked={Content.showEditor} class="form-check-input me-1" type="checkbox" value="" id="firstCheckbox">
+              <label class="form-check-label" for="firstCheckbox">Show Editor</label>
+            </li>
+            <li class="list-group-item">
+              <input bind:checked={Content.showPreview} class="form-check-input me-1" type="checkbox" value="" id="secondCheckbox">
+              <label class="form-check-label" for="secondCheckbox">Show Preview</label>
+            </li>
+            <li class="list-group-item">
+              <input class="form-check-input me-1" type="checkbox" value="" id="thirdCheckbox">
+              <label class="form-check-label" for="thirdCheckbox">Third checkbox</label>
+            </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
+
+  <div>
+    {JSON.stringify(Content,null,2)}
+  </div>
+
 {/if}
 
 {#if BlockLoaded == false}
