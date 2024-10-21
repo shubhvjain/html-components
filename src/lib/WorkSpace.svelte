@@ -1,10 +1,14 @@
 <script>
   import 'bootstrap/dist/css/bootstrap.min.css';
   import { onMount } from "svelte";
+  import {BeanBagDB} from "beanbagdb"
+  import {getNewDB} from "./db.js"
+
   import HelpDoc from "./helppage/HelpDoc.svelte";
   import RecordSearch from "./beanbagdb/RecordSearch.svelte";
   import Record from "./beanbagdb/Record.svelte";
-  import {getNewDB} from "./db.js"
+  import DbSetting from './beanbagdb/DBSetting.svelte';
+
   export let db ;
   export let BBDB;
   let Loaded = false
@@ -24,7 +28,7 @@
   // Method to add a new page
   function addPage(pageType, criteria={}, size = 'medium') {
     console.log(pageType)
-    const singlePageTypes = ["dashboard","page"]
+    const singlePageTypes = ["dashboard","page","database_setting"]
     let add_new = true;
     if(singlePageTypes.includes(singlePageTypes)){
       const existingPage = pages.find(page => page.pageType === pageType & page.criteria == criteria );
@@ -57,6 +61,11 @@
         rest.shift()
         addPage("open",{key:rest.join("")})
       }
+    }
+
+    if(firstPart=="dbsettings"){
+      // todo add error handling 
+      addPage("dbsettings",{})
     }
 
     //addPage("Sample "+Math.round(Math.random()*1000))
@@ -94,22 +103,38 @@
   }
 
 
-  onMount(()=>{
-
-    if(BBDB){
-      console.log("hhh")
-    }else{
-      if(db){
-        try {
-          BBDB = getNewDB(db)
-        } catch (error) {
-          console.log(error)
-          Error = error.message
-        }
-      }else{
-        Error = "No details about the database provided."
+  onMount(async ()=>{
+    if(!BBDB){
+      if(!db){
+        Loaded = true
+        Error = "Error : No details about the database were provided"
+      }
+      try {
+        BBDB = getNewDB(db)
+        Loaded = true
+      } catch (error) {
+        console.log(error)
+        Error = "Error: "+error.message
+        Loaded = true
       }
     }
+
+    if(BBDB instanceof BeanBagDB == false){
+      Loaded = true
+      Error = "Invalid Database connection"
+    }
+
+    if (BBDB.active){
+      console.log("ready...")
+      
+    }else{
+      await BBDB.ready()
+      searchPage("dbsettings")
+    }
+
+    
+
+
 
     if(pages.length==0){
       // new workspace, open the dash board automatically 
@@ -306,6 +331,10 @@
       {#if page.pageType == "open"}
       <Record  on:openLink={(event) => handleOpenLinkRequests(event.detail)}></Record>
       {/if}
+
+      {#if page.pageType == "dbsettings"}
+        <DbSetting BBDB={BBDB}></DbSetting>
+      {/if}
       
 
     </div>
@@ -314,6 +343,6 @@
 </div>
 {:else}
 <div class="alert alert-primary">
-Loading workspace
+{Error||"Loading"} 
 </div>
 {/if}

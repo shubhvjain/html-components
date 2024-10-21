@@ -9,12 +9,12 @@
 
 <script>
   let db = {
-    db_name: "",
+    name: "test",
     encryption_key:"SampleKeyForTesting1234"
   }
 </script>
 
 <Story name="Initial">
-  <WorkSpace ></WorkSpace>
+  <WorkSpace db={db}></WorkSpace>
 </Story>
 

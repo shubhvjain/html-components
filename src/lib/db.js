@@ -1,80 +1,18 @@
 import { BeanBagDB } from "beanbagdb";
 
+import * as PouchDB from "./pouchdb.min.js"
+import * as PouchDBFind from "./pouchdb.find.js"
+
 // this is a pouch db instance of beanbagdb used for testing.
 import Ajv from "ajv";
 
-import PouchDB from "pouchdb-browser";
-import pouchdbFind from "pouchdb-find";
-PouchDB.plugin(pouchdbFind);
+//PouchDB.plugin(pouchdbFind);
 
 let pdb
 
-async function encrypt(text, encryptionKey) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-
-  // Convert encryptionKey to CryptoKey
-  const key = await window.crypto.subtle.importKey(
-      'raw', 
-      encoder.encode(encryptionKey), 
-      { name: 'AES-GCM' },
-      false,
-      ['encrypt']
-  );
-
-  // Create a random initialization vector (IV)
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-
-  // Encrypt the data
-  const encrypted = await window.crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: iv },
-      key,
-      data
-  );
-
-  // Convert encrypted data and IV to base64 for storage
-  const encryptedArray = new Uint8Array(encrypted);
-  const encryptedText = btoa(String.fromCharCode(...encryptedArray));
-  const ivText = btoa(String.fromCharCode(...iv));
-
-  return ivText + ':' + encryptedText; // Store IV and encrypted text together
-}
-
-
-async function decrypt(encryptedText, encryptionKey) {
-  const [ivText, encryptedData] = encryptedText.split(':');
-
-  // Convert IV and encrypted data from base64 to byte arrays
-  const iv = Uint8Array.from(atob(ivText), c => c.charCodeAt(0));
-  const encryptedArray = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0));
-
-  const encoder = new TextEncoder();
-
-  // Convert encryptionKey to CryptoKey
-  const key = await window.crypto.subtle.importKey(
-      'raw', 
-      encoder.encode(encryptionKey), 
-      { name: 'AES-GCM' },
-      false,
-      ['decrypt']
-  );
-
-  // Decrypt the data
-  const decrypted = await window.crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: iv },
-      key,
-      encryptedArray
-  );
-
-  // Convert decrypted data back to a string
-  const decoder = new TextDecoder();
-  return decoder.decode(decrypted);
-}
-
-
-
 export const get_pdb_doc = (dbname, secret) => {
-  pdb = new PouchDB(dbname);
+  //window.PouchDB.plugin(PouchDBFind)
+  pdb = new window.PouchDB(dbname);
   console.log(pdb)
   const doc_obj = {
     name: dbname,
@@ -183,6 +121,7 @@ export const get_pdb_doc = (dbname, secret) => {
 };
 
 export const getNewDB = (db) => {
+  //console.log(db)
   if (!db.name) {
     throw new Error("No DB name was provided");
   }
