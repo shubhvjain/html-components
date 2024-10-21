@@ -8,10 +8,13 @@
 </script>
 
 <script>
-
+  let db = {
+    db_name: "",
+    encryption_key:"SampleKeyForTesting1234"
+  }
 </script>
 
 <Story name="Initial">
-  <WorkSpace></WorkSpace>
+  <WorkSpace ></WorkSpace>
 </Story>
 
