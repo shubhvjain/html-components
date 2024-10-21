@@ -6,14 +6,72 @@ import Ajv from "ajv";
 import PouchDB from "pouchdb-browser";
 import pouchdbFind from "pouchdb-find";
 PouchDB.plugin(pouchdbFind);
-import {
-  scryptSync,
-  randomBytes,
-  createCipheriv,
-  createDecipheriv,
-} from "crypto";
 
 let pdb
+
+async function encrypt(text, encryptionKey) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+
+  // Convert encryptionKey to CryptoKey
+  const key = await window.crypto.subtle.importKey(
+      'raw', 
+      encoder.encode(encryptionKey), 
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
+  );
+
+  // Create a random initialization vector (IV)
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+  // Encrypt the data
+  const encrypted = await window.crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv },
+      key,
+      data
+  );
+
+  // Convert encrypted data and IV to base64 for storage
+  const encryptedArray = new Uint8Array(encrypted);
+  const encryptedText = btoa(String.fromCharCode(...encryptedArray));
+  const ivText = btoa(String.fromCharCode(...iv));
+
+  return ivText + ':' + encryptedText; // Store IV and encrypted text together
+}
+
+
+async function decrypt(encryptedText, encryptionKey) {
+  const [ivText, encryptedData] = encryptedText.split(':');
+
+  // Convert IV and encrypted data from base64 to byte arrays
+  const iv = Uint8Array.from(atob(ivText), c => c.charCodeAt(0));
+  const encryptedArray = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0));
+
+  const encoder = new TextEncoder();
+
+  // Convert encryptionKey to CryptoKey
+  const key = await window.crypto.subtle.importKey(
+      'raw', 
+      encoder.encode(encryptionKey), 
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
+  );
+
+  // Decrypt the data
+  const decrypted = await window.crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: iv },
+      key,
+      encryptedArray
+  );
+
+  // Convert decrypted data back to a string
+  const decoder = new TextDecoder();
+  return decoder.decode(decrypted);
+}
+
+
 
 export const get_pdb_doc = (dbname, secret) => {
   pdb = new PouchDB(dbname);
@@ -51,23 +109,64 @@ export const get_pdb_doc = (dbname, secret) => {
       },
     },
     utils: {
-      encrypt: (text, encryptionKey) => {
-        const key = scryptSync(encryptionKey, "salt", 32); // Derive a 256-bit key
-        const iv = randomBytes(16); // Initialization vector
-        const cipher = createCipheriv("aes-256-cbc", key, iv);
-        let encrypted = cipher.update(text, "utf8", "hex");
-        encrypted += cipher.final("hex");
-        return iv.toString("hex") + ":" + encrypted; // Prepend the IV for decryption
+      encrypt: async (text, encryptionKey)=> {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+      
+        // Convert encryptionKey to CryptoKey
+        const key = await window.crypto.subtle.importKey(
+            'raw', 
+            encoder.encode(encryptionKey), 
+            { name: 'AES-GCM' },
+            false,
+            ['encrypt']
+        );
+      
+        // Create a random initialization vector (IV)
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      
+        // Encrypt the data
+        const encrypted = await window.crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv: iv },
+            key,
+            data
+        );
+      
+        // Convert encrypted data and IV to base64 for storage
+        const encryptedArray = new Uint8Array(encrypted);
+        const encryptedText = btoa(String.fromCharCode(...encryptedArray));
+        const ivText = btoa(String.fromCharCode(...iv));
+      
+        return ivText + ':' + encryptedText; // Store IV and encrypted text together
       },
-      decrypt: (encryptedText, encryptionKey) => {
-        const key = scryptSync(encryptionKey, "salt", 32); // Derive a 256-bit key
-        const [ivHex, encryptedHex] = encryptedText.split(":");
-        const iv = Buffer.from(ivHex, "hex");
-        const encrypted = Buffer.from(encryptedHex, "hex");
-        const decipher = createDecipheriv("aes-256-cbc", key, iv);
-        let decrypted = decipher.update(encrypted, "hex", "utf8");
-        decrypted += decipher.final("utf8");
-        return decrypted;
+      decrypt: async(encryptedText, encryptionKey) => {
+        const [ivText, encryptedData] = encryptedText.split(':');
+      
+        // Convert IV and encrypted data from base64 to byte arrays
+        const iv = Uint8Array.from(atob(ivText), c => c.charCodeAt(0));
+        const encryptedArray = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0));
+      
+        const encoder = new TextEncoder();
+      
+        // Convert encryptionKey to CryptoKey
+        const key = await window.crypto.subtle.importKey(
+            'raw', 
+            encoder.encode(encryptionKey), 
+            { name: 'AES-GCM' },
+            false,
+            ['decrypt']
+        );
+      
+        // Decrypt the data
+        const decrypted = await window.crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: iv },
+            key,
+            encryptedArray
+        );
+      
+        // Convert decrypted data back to a string
+        const decoder = new TextDecoder();
+        return decoder.decode(decrypted);
       },
       ping: () => {
         // @TODO ping the database to check connectivity when class is ready to use

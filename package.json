@@ -61,7 +61,7 @@
     "@lezer/highlight": "^1.2.1",
     "@lezer/lr": "^1.4.2",
     "ajv": "^8.17.1",
-    "beanbagdb": "^0.5.52",
+    "beanbagdb": "^0.5.53",
     "bootstrap": "^5.3.3",
     "codemirror": "^6.0.1",
     "pouchdb-browser": "^9.0.0",
