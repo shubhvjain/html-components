@@ -1,6 +1,6 @@
 {
   "name": "svelte-html-components",
-  "version": "0.0.51",
+  "version": "0.0.54",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run package",
