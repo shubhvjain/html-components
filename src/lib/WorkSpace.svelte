@@ -1,8 +1,14 @@
 <script>
+  import 'bootstrap/dist/css/bootstrap.min.css';
   import { onMount } from "svelte";
   import HelpDoc from "./helppage/HelpDoc.svelte";
   import RecordSearch from "./beanbagdb/RecordSearch.svelte";
   import Record from "./beanbagdb/Record.svelte";
+  import {getNewDB} from "./db.js"
+  export let db ;
+  export let BBDB;
+  let Loaded = false
+  let Error ;
   // This will hold our array of opened pages/components
   let workspace = {
     pages : [],
@@ -18,7 +24,7 @@
   // Method to add a new page
   function addPage(pageType, criteria={}, size = 'medium') {
     console.log(pageType)
-    const singlePageTypes = ["dashboard"]
+    const singlePageTypes = ["dashboard","page"]
     let add_new = true;
     if(singlePageTypes.includes(singlePageTypes)){
       const existingPage = pages.find(page => page.pageType === pageType & page.criteria == criteria );
@@ -81,14 +87,30 @@
     searchPage(data)
   }
 
-  
 
   // Function to toggle the theme
   function toggleTheme() {
     workspace.theme = workspace.theme === 'light' ? 'dark' : 'light';
   }
 
+
   onMount(()=>{
+
+    if(BBDB){
+      console.log("hhh")
+    }else{
+      if(db){
+        try {
+          BBDB = getNewDB(db)
+        } catch (error) {
+          console.log(error)
+          Error = error.message
+        }
+      }else{
+        Error = "No details about the database provided."
+      }
+    }
+
     if(pages.length==0){
       // new workspace, open the dash board automatically 
       searchPage("find/search")
@@ -109,15 +131,12 @@
     flex-direction: column;
     background-color: var(--bs-body-bg);
     color: var(--bs-body-color);
-    height: 97vh;
+    height: 100vh;
     margin: 0px;
     padding: 0px;
     /* gap: 1rem; */
   }
 
-  .workspace {
-
-}
 
   
   .search-box {
@@ -216,19 +235,15 @@
     padding-right: 1.35rem
   }
 
-
-
 </style>
-<div class="container-fluid">
+{#if !Error & Loaded }
+  
 
-</div>
 <div class="workspace container-fluid" data-bs-theme={workspace.theme}>
   <nav class="navbar bg-body-tertiary">
     <div class="container-fluid">
-      <h4 class="navbar-brand pl-4 ml-2">{workspace.title}</h4>
+      <h4 class="navbar-brand pl-4 ml-2 mb-0">{workspace.title}</h4>
       <div class="d-flex" role="search">
-        
-  
         <input  class="form-control form-control-sm" bind:value={searchTerm} placeholder="Search or open new page..." aria-label="Search term" type="text" >
         <button class="btn btn-sm btn-outline-secondary" type="button" on:click={() => searchPage(searchTerm)} >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -297,3 +312,8 @@
   {/each}
   </div>
 </div>
+{:else}
+<div class="alert alert-primary">
+Loading workspace
+</div>
+{/if}
