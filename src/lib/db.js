@@ -13,7 +13,7 @@ let pdb
 export const get_pdb_doc = (dbname, secret) => {
   //window.PouchDB.plugin(PouchDBFind)
   pdb = new window.PouchDB(dbname);
-  console.log(pdb)
+  //console.log(pdb)
   const doc_obj = {
     name: dbname,
     db_name: "pouchdb",

@@ -6,8 +6,8 @@
 
   import HelpDoc from "./helppage/HelpDoc.svelte";
   import RecordSearch from "./beanbagdb/RecordSearch.svelte";
-  import Record from "./beanbagdb/Record.svelte";
-  import DbSetting from './beanbagdb/DBSetting.svelte';
+  import Record from "./beanbagdb_records/Record.svelte";
+  import DbSetting from './beanbagdb_settings/DBSetting.svelte';
 
   export let db ;
   export let BBDB;
@@ -132,7 +132,7 @@
       searchPage("dbsettings")
     }
 
-    
+
 
 
 
