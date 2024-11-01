@@ -1,14 +1,13 @@
 <script>
   import "bootstrap/dist/css/bootstrap.min.css";
   import { onMount } from "svelte";
-  import JsonEditor from "$lib/JsonEditor.svelte";
+  import JsonEditor from "$lib/utils/JsonEditor.svelte";
   import SchemaEditor from "./SchemaEditor.svelte";
   export let data;
   export let schema = {};
   let Loaded = false;
   let Error = "";
-  let system_schemas = {
-  }
+  let system_schemas = {}
   const load_record = () => {
     console.log("Loading record...");
     Error = "";

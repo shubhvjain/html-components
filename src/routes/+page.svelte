@@ -1,4 +1,4 @@
 <script>
-import WorkSpace from "$lib/WorkSpace.stories.svelte";
+import WorkSpace from "$lib/ui/WorkSpace.stories.svelte";
 </script>
 <WorkSpace></WorkSpace>

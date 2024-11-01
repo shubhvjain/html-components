@@ -1,7 +1,7 @@
 <script>
-  import SimpleEditor from "$lib/SimpleEditor.svelte";
+  import SimpleEditor from "$lib/utils/SimpleEditor.svelte";
   import { onMount } from "svelte";
-  import JsonEditor from "$lib/JsonEditor.svelte";
+  import JsonEditor from "$lib/utils/JsonEditor.svelte";
   
   export let schema_object = {};
   let isValidJson = false;

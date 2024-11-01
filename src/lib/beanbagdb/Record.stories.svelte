@@ -1,7 +1,7 @@
 <script context="module">
   import { Story } from '@storybook/addon-svelte-csf';
   import Record from './Record.svelte';
-  import { getNewDB } from "../db.js";
+  import { getNewDB } from "./db.js";
 
   export const meta = {
     title: "Record",
@@ -23,6 +23,6 @@
   })();
 </script>
 
-<Story name="Basic">
+<Story name="Schema record1">
   <Record {schema} {data}></Record>
 </Story>

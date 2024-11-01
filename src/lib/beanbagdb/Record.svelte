@@ -2,12 +2,12 @@
   import "bootstrap/dist/css/bootstrap.min.css";
   import "$lib/default.style.css"
   import { onMount } from "svelte";
-  import KeyRecord from "./KeyRecord.svelte";
-  import MediaRecord from "./MediaRecord.svelte";
-  import RecordMetadata from "./RecordMetadata.svelte";
-  import SchemaRecord from "./SchemaRecord.svelte";
-  import SettingRecord from "./SettingRecord.svelte";
-  import JsonEditor from "$lib/JsonEditor.svelte";
+  import KeyRecord from "../beanbagdb_records/KeyRecord.svelte";
+  import MediaRecord from "../beanbagdb_records/MediaRecord.svelte";
+  import RecordMetadata from "../beanbagdb_records/RecordMetadata.svelte";
+  import SchemaRecord from "../beanbagdb_records/SchemaRecord.svelte";
+  import SettingRecord from "../beanbagdb_records/SettingRecord.svelte";
+  import JsonEditor from "$lib/utils/JsonEditor.svelte";
   export let data;
   export let schema = {};
   let Loaded = false;

@@ -2,12 +2,12 @@
   import 'bootstrap/dist/css/bootstrap.min.css';
   import { onMount } from "svelte";
   import {BeanBagDB} from "beanbagdb"
-  import {getNewDB} from "./db.js"
+  import {getNewDB} from "../beanbagdb/db.js"
 
-  import HelpDoc from "./helppage/HelpDoc.svelte";
-  import RecordSearch from "./beanbagdb/RecordSearch.svelte";
-  import Record from "./beanbagdb_records/Record.svelte";
-  import DbSetting from './beanbagdb_settings/DBSetting.svelte';
+  import HelpDoc from "../helppage/HelpDoc.svelte";
+  import RecordSearch from "../beanbagdb/RecordSearch.svelte";
+  import Record from "../beanbagdb/Record.svelte";
+  import DbSetting from '../beanbagdb_settings/DBSetting.svelte';
 
   export let db ;
   export let BBDB;
