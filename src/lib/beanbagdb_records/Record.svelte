@@ -1,5 +1,6 @@
 <script>
   import "bootstrap/dist/css/bootstrap.min.css";
+  import "$lib/default.style.css"
   import { onMount } from "svelte";
   import KeyRecord from "./KeyRecord.svelte";
   import MediaRecord from "./MediaRecord.svelte";

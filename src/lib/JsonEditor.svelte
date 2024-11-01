@@ -11,6 +11,9 @@
   export let schema = {};
   export let data = {};
   export let options = {};
+  import { createEventDispatcher } from 'svelte'; // Import the event dispatcher
+
+  const dispatch = createEventDispatcher(); // Create event dispatcher
 
   let theEditor; // this is where the json editor is loaded
 
@@ -112,6 +115,13 @@
           data = theEditor.getValue();
           console.log(data);
         }
+
+        // Emit inputChanged event
+        dispatch('inputChanged', {
+          valid: errors.length === 0, // Check if there are validation errors
+          data: data // Return the current data
+        });
+
       })
       
       config.editor_loaded = true
