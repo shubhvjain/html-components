@@ -61,8 +61,11 @@
     "@lezer/highlight": "^1.2.1",
     "@lezer/lr": "^1.4.2",
     "ajv": "^8.17.1",
+    "axios": "^1.7.7",
     "beanbagdb": "^0.5.53",
     "bootstrap": "^5.3.3",
-    "codemirror": "^6.0.1"
+    "codemirror": "^6.0.1",
+    "svelvet": "^10.0.2",
+    "vis-network": "^9.1.9"
   }
 }

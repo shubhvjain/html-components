@@ -2,11 +2,24 @@
   // import {Story} from '@storybook/addon-svelte-csf'
   import ImageEditor from './ImageEditor.svelte';
   import JsonEditor from './JsonEditor.svelte';
-
+  import AIAssistant from './AIAssistant.svelte';
   export const meta = {
     title : "Utility Components",
     //component : ImageEditor
   }
+  import { get_test_db } from "../beanbagdb/testdb.js";  
+  let search_records = [];
+  console.log("db loading started...")
+  let db;
+  get_test_db().then(async(db_instance)=>{
+    db = db_instance
+    let s = await db.search({ selector: {} });
+    search_records = [...s.docs]; 
+    console.log("db loading done...")
+  }).catch(error=>{
+    console.log(error)
+  })
+
 </script>
 
 <script>
@@ -89,3 +102,8 @@
   </code>
 </Story>
 
+
+<Story name="Prompts 1">
+  <AIAssistant/>
+  
+</Story>

@@ -2,11 +2,11 @@
   import 'bootstrap/dist/css/bootstrap.min.css';
   import { onMount } from "svelte";
   import {BeanBagDB} from "beanbagdb"
-  import {getNewDB} from "../beanbagdb/db.js"
+  import {get_new_DB} from "../beanbagdb/db.js"
 
   import HelpDoc from "../helppage/HelpDoc.svelte";
   import RecordSearch from "../beanbagdb/RecordSearch.svelte";
-  import Record from "../beanbagdb/Record.svelte";
+  import Record from "../beanbagdb/RecordEdit.svelte";
   import DbSetting from '../beanbagdb_settings/DBSetting.svelte';
 
   export let db ;
@@ -110,7 +110,7 @@
         Error = "Error : No details about the database were provided"
       }
       try {
-        BBDB = getNewDB(db)
+        BBDB = get_new_DB(db)
         Loaded = true
       } catch (error) {
         console.log(error)

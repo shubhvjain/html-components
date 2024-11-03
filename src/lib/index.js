@@ -5,7 +5,7 @@
 
 export {default as Workspace} from "./ui/WorkSpace.svelte"
 
-export {default as Record} from "./beanbagdb/Record.svelte"
+export {default as Record} from "./beanbagdb/RecordEdit.svelte"
 export {default as RecordSearch} from "./beanbagdb/RecordSearch.svelte"
 export {default as Schema} from "./beanbagdb/Schema.svelte"
 

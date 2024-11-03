@@ -45,7 +45,7 @@
   {:else if schema.data.name === "system_media"}
     <MediaRecord {data} {schema}></MediaRecord>
   {:else}
-    <JsonEditor schema={schema.data.schema}></JsonEditor>
+    <JsonEditor {data} schema={schema.data.schema}></JsonEditor>
   {/if}
 {/if}
 
