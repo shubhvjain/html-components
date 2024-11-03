@@ -3,13 +3,13 @@ import { DocCreationError } from "beanbagdb";
 
 export const get_test_db = async (db=null)=>{
   if(!db){
-    db = {name: "test_storybook6",encryption_key: "SampleKeyForTesting12345"}
+    db = {name: "test_storybook10",encryption_key: "SampleKeyForTesting12345"}
   }
   let bbdb = await get_ready_DB(db)
   return bbdb
 }
 
-export const add_test_data = async (db) => {
+export const add_test_data = async (BBDB) => {
 
   // taken from  : https://json-schema.org/learn/json-schema-examples
   const schemas = [
@@ -58,9 +58,8 @@ export const add_test_data = async (db) => {
       version: 1,
       description: "A representation of a blog post",
       schema : {
-       
         additionalProperties:false,
-        "type": "object",
+        type: "object",
         "required": ["title", "content", "author"],
         "properties": {
           "title": {
@@ -556,6 +555,7 @@ export const add_test_data = async (db) => {
   ]
   
   await BBDB.ready()
+
   for (let index = 0; index < schemas.length; index++) {
     const element = schemas[index];
     try {
@@ -576,15 +576,19 @@ export const add_test_data = async (db) => {
       }
     }  
   }
-  for (let index = 0; index < records.length; index++) {
+  let a = records.length
+  for (let index = 0; index < a; index++) {
     try {
+      console.log(index)
       const element = records[index];
       console.log(element)
       let rec = await BBDB.create(element.schema,element.data)
-      console.log(rec)  
+      //console.log(rec)  
+      //console.log(index)
     } catch (error) {
       console.log("error creating rec")
       console.log(error)
     }  
+    console.log(index)
   }
 };

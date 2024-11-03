@@ -16,10 +16,10 @@
   const load_settings = async()=>{
     
     let sch = await BBDB.search({"selector":{"schema":"schema"}})
-    console.log(sch)
     data["system_schema"] = sch["docs"]
-    let log = await BBDB.search({"selector":{"schema":"system_settings","data.name":"system_logs"}})
-    console.log(log)
+    let log_search = await BBDB.search({"selector":{"schema":"system_log"}})
+    data["logs"] = log_search["docs"]
+    console.log(data)
     Loaded =true
   }
 
@@ -59,12 +59,31 @@
         {#if data.system_schema && data.system_schema.length > 0}
         <ul>
           {#each data.system_schema as s}
-            <li>{s.data.name}</li> 
+        <!-- <li> {JSON.stringify(s.data.name)}</li>  -->
+          <li> <code>{s.data.name}</code> </li> 
           {/each}
         </ul>
       {:else}
         <p>No system databases found.</p>
       {/if}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        System Logs
+      </td>
+      <td>
+        <ul>
+          {#each data.logs as log}
+          <li>
+            <code> {(new Date(log.data.time*1000)).toLocaleString()} </code>: <p>{log.data.text}</p>
+            <details>
+              <summary>Details</summary>
+              <pre>{JSON.stringify(log.data.data,null,2)}</pre>
+            </details>
+          </li>
+          {/each}
+        </ul>
       </td>
     </tr>
 

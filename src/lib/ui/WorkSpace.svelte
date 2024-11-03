@@ -7,7 +7,7 @@
   import HelpDoc from "../helppage/HelpDoc.svelte";
   import RecordSearch from "../beanbagdb/RecordSearch.svelte";
   import Record from "../beanbagdb/RecordEdit.svelte";
-  import DbSetting from '../beanbagdb_settings/DBSetting.svelte';
+  import DbSetting from '../beanbagdb_page/DBSetting.svelte';
 
   export let db ;
   export let BBDB;

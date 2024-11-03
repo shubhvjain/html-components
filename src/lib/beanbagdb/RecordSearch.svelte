@@ -105,6 +105,7 @@
     const special_fields = {
       "meta.created_on": special_types.date,
       "meta.updated_on": special_types.date,
+      "data.time":special_types.date
       // Add more fields that need special handling if necessary
     };
 
